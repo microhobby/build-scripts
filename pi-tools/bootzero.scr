@@ -1,0 +1,9 @@
+mmc dev 0
+# setenv bootargs dwc_otg.lpm_enable=0 root=/dev/${mmcblk} elevator=deadline loglevel=8 rootwait
+setenv bootargs ${cmdline}
+# setenv bootargs dwc_otg.lpm_enable=0 console=ttyS0,115200 console=serial0,115200 console=tty1 root=PARTUUID=8fc3efbd-02 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait
+# setenv bootargs root=/dev/mmcblk0p2 rootwait
+saveenv
+fatload mmc 0:1 ${kernel_addr_r} zImage
+fatload mmc 0:1 ${fdt_addr_r} ${fdtfile}
+bootz ${kernel_addr_r} - ${fdt_addr_r}

@@ -1,0 +1,12 @@
+mmc dev 0
+setenv fdtfile bcm2835-rpi-zero-w.dtb
+setenv overlayfile overlays/simple-overlay.dtb
+setenv fdtovaddr 0x87fc0000
+setenv bootargs earlyprintk console=tty0,115200 console=ttyAMA0,115200 root=/dev/mmcblk0p2 rootwai
+fatload mmc 0:1 ${kernel_addr_r} zImage
+fatload mmc 0:1 ${fdt_addr_r} ${fdtfile}
+fatload mmc 0:1 ${fdtovaddr} ${overlayfile}
+fdt addr ${fdt_addr_r}
+fdt resize 800
+fdt apply ${fdtovaddr}
+bootz ${kernel_addr_r} - ${fdt_addr_r}
