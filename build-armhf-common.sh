@@ -31,8 +31,8 @@ cd $kernel_src
 if [ "$2" != "no-clean" ]; then
 	echo -e "${RED}CLEAN 🧹${NC}"
 	# Goto kernel source and clean
-	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- O=$artifacts distclean
-	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- O=$artifacts clean
+	sudo make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- O=$artifacts distclean
+	sudo make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- O=$artifacts clean
 fi
 
 echo -e "${RED}CONFIG 🧰${NC}"
@@ -50,6 +50,8 @@ lastError=$(lastErrorCheck $lastError)
 if [ "$3" != "no-install-modules" ]; then
 	echo -e "${RED}INSTALL modules 🔥🔥🔥${NC}"
 	sudo make O=$artifacts INSTALL_MOD_PATH=$path modules_install
+	lastError=$(lastErrorCheck $lastError)
+	sudo make O=$artifacts ARCH=arm INSTALL_HDR_PATH=$path/usr headers_install
 	lastError=$(lastErrorCheck $lastError)
 fi
 
@@ -70,10 +72,21 @@ else
 		echo -e "${RED}COPY TO SDCARD 💾${NC}"
 		cd -
 		cd $artifacts
-		sudo cp arch/arm/boot/zImage $path_boot
-		sudo cp arch/arm/boot/dts/*.dtb $path_boot
-		sudo umount $path_boot
-		sudo umount $path
+
+		# umount and copy if we have paths
+		if [ "$path_boot" != "" ]; then
+			sudo cp arch/arm/boot/dts/*$dtb_prefix* $path_boot
+			sudo cp arch/arm/boot/zImage $path_boot
+			sudo umount $path_boot
+		fi
+
+		if [ "$path" != "" ]; then
+			sudo umount $path
+		fi
+
+		if [ "$path_ramdisk" != "" ]; then
+			sudo umount $path_ramdisk
+		fi
 	fi
 	
 	echo -e "${RED}DONE 👌😎${NC}"
