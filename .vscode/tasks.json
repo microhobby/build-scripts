@@ -1,0 +1,49 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+// presenter
+        {
+            "label": ".🔥 WSL 2 x86 Mainline Kernel",
+            "command": "",
+            "type": "shell",
+            "args": [],
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "presentation": {
+                "reveal": "always"
+            },
+            "dependsOn": [
+                "build-wsl-x86-kernel-mainline"
+            ],
+            "dependsOrder": "sequence",
+            "group": "build"
+        },
+// actual commands
+        {
+            "label": "build-wsl-x86-kernel-mainline",
+            "detail": "hide",
+            "command": "pwsh",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/WSL/kernel/x86",
+                "env": {
+                    "KERNEL_CLEAN": "${config:kernel_clean}"
+                }
+            },
+            "args": [
+                "-NoProfile",
+                "-File",
+                "mainline.ps1"
+            ],
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "presentation": {
+                "reveal": "always"
+            },
+            "dependsOrder": "sequence",
+            "group": "build"
+        }
+    ]
+}
